@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  app_auth:
+    build: auth/auth
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:mysql://msql8db:3306/tordersdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: 1234
+    restart: always
+    depends_on:
+      msql8db:
+          condition: service_healthy
+  app_order:
+    build: order/order
+    mem_limit: 512m
+    ports:
+      - "8081:8081"
+    environment:
+      DATABASE_URL: jdbc:mysql://msql8db:3306/tordersdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: 1234
+    restart: always
+    depends_on:
+      msql8db:
+        condition: service_healthy
+  app_driver:
+    build: driver/driver
+    mem_limit: 512m
+    ports:
+      - "8082:8082"
+    environment:
+      DATABASE_URL: jdbc:mysql://msql8db:3306/tordersdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: 1234
+    restart: always
+    depends_on:
+      msql8db:
+        condition: service_healthy
+  app_assignment:
+    build: assignment/assignment
+    mem_limit: 512m
+    ports:
+      - "8083:8083"
+    environment:
+      DATABASE_URL: jdbc:mysql://msql8db:3306/tordersdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: 1234
+    restart: always
+    depends_on:
+      msql8db:
+        condition: service_healthy			
+  msql8db:
+    image: mysql:8.0.33 
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: tordersdb
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
