@@ -1,11 +1,21 @@
 version: '3.8'
 
 services:
-  app_auth:
-    build: auth/auth
+  app_api-gateway:
+    build: auth
     mem_limit: 512m
     ports:
       - "8080:8080"
+  app_discovery:
+    build: auth
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
+  app_auth:
+    build: auth
+    mem_limit: 512m
+    ports:
+      - "8084:8084"
     environment:
       DATABASE_URL: jdbc:mysql://msql8db:3306/tordersdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       DATABASE_USERNAME: root
@@ -15,7 +25,7 @@ services:
       msql8db:
           condition: service_healthy
   app_order:
-    build: order/order
+    build: order
     mem_limit: 512m
     ports:
       - "8081:8081"
@@ -28,7 +38,7 @@ services:
       msql8db:
         condition: service_healthy
   app_driver:
-    build: driver/driver
+    build: driver
     mem_limit: 512m
     ports:
       - "8082:8082"
@@ -41,7 +51,7 @@ services:
       msql8db:
         condition: service_healthy
   app_assignment:
-    build: assignment/assignment
+    build: assignment
     mem_limit: 512m
     ports:
       - "8083:8083"
